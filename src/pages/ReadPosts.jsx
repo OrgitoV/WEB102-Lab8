@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react'
 import Card from '../components/Card'
+import { supabase } from '../client.js';
 
 const ReadPosts = (props) => {
 
     const [posts, setPosts] = useState([])
 
     useEffect(() => {
-        setPosts(props.data)
+        const fetchPost = async () => {
+            const { data } = await supabase
+                .from('Posts')
+                .select()
+                .order('created_at', { ascending: true });
+            
+            setPosts(data);
+        }
+
+        fetchPost();
     }, [props])
     
     return (
@@ -22,6 +32,7 @@ const ReadPosts = (props) => {
                         title={post.title}
                         author={post.author}
                         description={post.description}
+                        betCount = {post.betCount}
                     />
                 ) : <h2>{'No Challenges Yet 😞'}</h2>
             }
